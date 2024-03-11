@@ -9,6 +9,8 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
+from device import get_device
+
 # sys.path.insert(0, '/content/drive/MyDrive/fm-g-cam')
 # from utils._base import visualize_saliency_maps
 
@@ -27,14 +29,15 @@ class FMGradCAM:
         self.target_layer = target_layer
         self.class_count = class_count
         self.activation_fn = activation_fn
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = get_device()
         self.model.eval()
         self.queue = queue.Queue()
 
     def _get_saliency_maps(self):
         self.model.to(self.device)
-        self.image.to(self.device)
-        self.extract_gradients_with_predictions(plot_pdf=True)
+        # self.target_layer.to(self.device)
+        #self.image.to(self.device)
+        self.extract_gradients_with_predictions()
         self.get_weighted_activations()
         self.saliency_maps = torch.cat(self.saliency_maps)
         filtered_maximum_weighted_activations_indexes = self.saliency_maps.argmax(
@@ -80,8 +83,8 @@ class FMGradCAM:
 
         hook_backward = self.target_layer.register_backward_hook(hook_backward)
         hook_forward = self.target_layer.register_forward_hook(hook_forward)
-        self.model.eval()
-        predictions = self.model(self.image.unsqueeze(0))
+        # self.model.eval()
+        predictions = self.model(self.image.unsqueeze(0).to(self.device))
         self.sorted_predictions_indexes = torch.argsort(
             predictions, dim=1, descending=True
         ).squeeze(0)
@@ -126,7 +129,7 @@ class FMGradCAM:
                     )
                     plt.legend()
                     plt.savefig(
-                        f"C:/Users/monta/Documents/MONT@/FM-G-CAM/fm-g-cam/gradients/pdf-channel-{channel}.png"
+                        f"/home/mmhamdi/workspace/classification/XAI-with-fused-multi-class-Grad-CAM/gradients/pdf-channel-{channel}.png"
                     )
 
             self.activations_list.append(activations)

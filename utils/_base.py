@@ -8,10 +8,20 @@ import torch
 def visualize_saliency_maps(
     saliency_maps: torch.tensor,
     original_image: np.array,
-    image_width: int = 32,
-    image_height: int = 32,
+    class_count: int,
+    image_width: int = 64,
+    image_height: int = 64,
 ):
-    heat_map_colours = [(1, 0, 0), (0, 1, 0), (0, 0, 1), (1, 1, 0), (0, 1, 1)]
+    heat_map_colours = [
+        (1, 1, 1),
+        (0, 1, 0),
+        (0, 0, 1),
+        (1, 1, 0),
+        (0, 1, 1),
+        (0.9, 0, 0),
+        (0, 0.9, 0),
+        (0, 0, 0.9),
+    ][:class_count]
     start_colour = (1, 1, 1)
     fused_heatmap_np = None
     for i, saliency_map in enumerate(saliency_maps):
@@ -34,5 +44,5 @@ def visualize_saliency_maps(
         original_image.convert("RGB"), fused_heatmap.convert("RGB"), alpha=0.3
     )
     new_image.save(
-        "C:/Users/monta/Documents/MONT@/FM-G-CAM/fm-g-cam/outputs/dog-and-cat-cover-hm-cc=4.png"
+        "/home/mmhamdi/workspace/classification/XAI-with-fused-multi-class-Grad-CAM/outputs/fmgradcam.jpg"
     )
