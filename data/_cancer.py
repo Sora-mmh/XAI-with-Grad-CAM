@@ -26,13 +26,13 @@ class CancerDataset(Dataset):
         self._cls = {
             cls_pth.stem: idx
             for idx, cls_pth in enumerate(
-                list((self._dataset_pth / data_type).iterdir())
+                list((self._dataset_pth / self._data_type).iterdir())
             )
         }
         self._annots_pths = [
             [img_pth, str(cls_pth.stem)]
-            for cls_pth in (data_type / data_type).iterdir()
-            for img_pth in cls_pth
+            for cls_pth in (self._dataset_pth / self._data_type).iterdir()
+            for img_pth in cls_pth.iterdir()
         ]
 
     def __len__(self):

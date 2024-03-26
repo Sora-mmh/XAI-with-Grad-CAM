@@ -19,9 +19,7 @@ logging.basicConfig(level=logging.INFO)
 
 if __name__ == "__main__":
     # sys.path.insert(0, "/fm-g-cam")
-    dataset_pth = Path(
-        "/home/mmhamdi/workspace/classification/dataset/car_damages_dataset/data"
-    )
+    dataset_pth = Path("/home/mmhamdi/workspace/classification/dataset/cancer_dataset/")
 
     classes = {"benign": 0, "malignant": 1}
     # "Missing part": 0,
@@ -33,8 +31,8 @@ if __name__ == "__main__":
     # "Paint chip": 6,
     # "Corrosion": 7,
 
-    epochs = 20
-    freeze = 5
+    epochs = 10
+    freeze = 13
     output_pth = Path(
         "/home/mmhamdi/workspace/classification/XAI-with-fused-multi-class-Grad-CAM/outputs"
     )
@@ -64,11 +62,11 @@ if __name__ == "__main__":
     evaluator.plot_confusion_matrix()
     logging.info("Evaluation complete.")
     target_layer = trainer.model.features[18][0]
-    class_count = 2
+    class_count = 1
     activation_fn = F.relu
     image_width, image_height = 224, 224
     image = Image.open(
-        "/home/mmhamdi/workspace/classification/dataset/cancer_dataset/test/malignant/1.jpg"
+        "/home/mmhamdi/workspace/classification/dataset/cancer_dataset/test/benign/1.jpg"
     )
     image = image.resize((image_height, image_width), resample=Image.BICUBIC)
     image_tensor = transforms.ToTensor()(image)

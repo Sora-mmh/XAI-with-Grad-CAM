@@ -13,14 +13,8 @@ def visualize_saliency_maps(
     image_height: int = 64,
 ):
     heat_map_colours = [
-        (1, 1, 1),
-        (0, 1, 0),
-        (0, 0, 1),
         (1, 1, 0),
         (0, 1, 1),
-        (0.9, 0, 0),
-        (0, 0.9, 0),
-        (0, 0, 0.9),
     ][:class_count]
     start_colour = (1, 1, 1)
     fused_heatmap_np = None
@@ -43,6 +37,11 @@ def visualize_saliency_maps(
     new_image = Image.blend(
         original_image.convert("RGB"), fused_heatmap.convert("RGB"), alpha=0.3
     )
-    new_image.save(
+    stacked_images = Image.new(
+        "RGB", (original_image.width + new_image.width, original_image.height)
+    )
+    stacked_images.paste(original_image, (0, 0))
+    stacked_images.paste(new_image, (original_image.width, 0))
+    stacked_images.save(
         "/home/mmhamdi/workspace/classification/XAI-with-fused-multi-class-Grad-CAM/outputs/fmgradcam.jpg"
     )
