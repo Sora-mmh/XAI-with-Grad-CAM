@@ -35,8 +35,8 @@ class FMGradCAM:
 
     def _get_saliency_maps(self):
         self.model.to(self.device)
-        # self.target_layer.to(self.device)
-        #self.image.to(self.device)
+        # TODO :
+        # approaches of computing the averaged gradients
         self.extract_gradients_with_predictions()
         self.get_weighted_activations()
         self.saliency_maps = torch.cat(self.saliency_maps)
