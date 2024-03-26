@@ -104,6 +104,7 @@ class DamagesDataset(Dataset):
         self._cls = cls
         self._transform = transform
         self._annots_pths = list((self._dataset_pth / data_type).iterdir())
+        self._annots_pths = [pth for pth in self._annots_pths if pth.stem.split('_')[-1] in ["Missing part", "Broken part", "Scratch", "Dent"]]
 
     def __len__(self):
         return len(self._annots_pths)
@@ -117,7 +118,6 @@ class DamagesDataset(Dataset):
         if self._transform is not None:
             img_tensor = self._transform(img_tensor)
         return img_tensor, self._cls[annot_label]
-
 
 def convert_polygon_to_bbox(polygon):
     polygon_arr = np.array(polygon)

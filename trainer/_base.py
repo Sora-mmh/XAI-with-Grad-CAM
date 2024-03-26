@@ -72,18 +72,19 @@ class ClassificationModel(ABC):
 class ClassificationMobileNetV2(ClassificationModel):
     def _build_model(self) -> None:
         self._model = models.mobilenet_v2(pretrained=True)
-        l_count = 0
-        for layer in list(self._model.children())[0]:  # type: ignore
-            l_count += 1
-            if l_count < self._freeze:
-                for param in layer.parameters():
-                    param.requires_grad = False
+        if self._freeze is not None:
+            l_count = 0
+            for layer in list(self._model.children())[0]:  # type: ignore
+                l_count += 1
+                if l_count < self._freeze:
+                    for param in layer.parameters():
+                        param.requires_grad = False
         num_features = self._model.classifier[1].in_features
         self._model.classifier[1] = torch.nn.Linear(num_features, len(self._cls))  # type: ignore
         self._model = self._model.to(self._device)
         self._criterion = torch.nn.CrossEntropyLoss()
-        self._optimizer = torch.optim.SGD(
-            self._model.parameters(), lr=0.001, momentum=0.9
+        self._optimizer = torch.optim.Adam(
+            self._model.parameters(), lr=1e-4
         )
         self._scheduler = torch.optim.lr_scheduler.StepLR(
             self._optimizer, step_size=7, gamma=0.1

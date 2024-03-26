@@ -1,3 +1,4 @@
-from ._base import DamagesDataset
+from ._damages import DamagesDataset
+from ._cancer import CancerDataset
 
-__all__ = ["DamagesDataset"]
+__all__ = ["DamagesDataset", "CancerDataset"]
