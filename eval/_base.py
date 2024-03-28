@@ -81,7 +81,8 @@ class Evaluator:
         plt.ylabel("Actual")
         plt.title("Confusion Matrix")
         plt.savefig((self._eval_pth / file_name).as_posix())
-        plt.show()
+        plt.close()
+
 
 
 def img_viewer(tnsr: torch.Tensor, title: Union[str, None] = None) -> None:

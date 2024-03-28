@@ -83,14 +83,12 @@ class ClassificationMobileNetV2(ClassificationModel):
         self._model.classifier[1] = torch.nn.Linear(num_features, len(self._cls))  # type: ignore
         self._model = self._model.to(self._device)
         self._criterion = torch.nn.CrossEntropyLoss()
-        self._optimizer = torch.optim.Adam(
-            self._model.parameters(), lr=1e-4
-        )
+        self._optimizer = torch.optim.Adam(self._model.parameters(), lr=1e-4)
         self._scheduler = torch.optim.lr_scheduler.StepLR(
             self._optimizer, step_size=7, gamma=0.1
         )
 
-    def train_model(self) -> None:
+    def train_model(self, show_metrics=True) -> None:
         start = time.time()
         best_model_wts = copy.deepcopy(self._model.state_dict())
         best_acc = 0.0
@@ -143,7 +141,8 @@ class ClassificationMobileNetV2(ClassificationModel):
         self._val_loss = [e for idx, e in enumerate(losses) if idx % 2 != 0]
         self._train_acc = [e for idx, e in enumerate(accs) if idx % 2 == 0]
         self._val_acc = [e for idx, e in enumerate(accs) if idx % 2 != 0]
-        self._show_metrics()
+        if show_metrics:
+            self._show_metrics()
 
     def _show_metrics(self) -> None:
         plt.style.use("fivethirtyeight")
@@ -168,4 +167,4 @@ class ClassificationMobileNetV2(ClassificationModel):
         plt.savefig(
             "/home/mmhamdi/workspace/classification/XAI-with-fused-multi-class-Grad-CAM/outputs/losses.jpg"
         )
-        # plt.show()
+        plt.close()

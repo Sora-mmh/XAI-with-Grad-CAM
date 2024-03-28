@@ -1,11 +1,13 @@
 import logging
 from pathlib import Path
+from matplotlib import pyplot as plt
 import requests
 
 from torchvision import transforms
 from torch.utils.data import DataLoader
 from torch.nn import functional as F
 from PIL import Image
+from mpl_toolkits.axes_grid1 import ImageGrid
 
 from data import DamagesDataset, CancerDataset
 from trainer import ClassificationMobileNetV2
@@ -65,15 +67,38 @@ if __name__ == "__main__":
     class_count = 1
     activation_fn = F.relu
     image_width, image_height = 224, 224
-    image = Image.open(
-        "/home/mmhamdi/workspace/classification/dataset/cancer_dataset/test/benign/1.jpg"
+    test_samples = []
+    benign_samples = list(
+        Path(
+            "/home/mmhamdi/workspace/classification/dataset/cancer_dataset/test/benign"
+        ).iterdir()
+    )[:10]
+    malignant_samples = list(
+        Path(
+            "/home/mmhamdi/workspace/classification/dataset/cancer_dataset/test/malignant"
+        ).iterdir()
+    )[:10]
+    test_samples.extend(benign_samples)
+    test_samples.extend(malignant_samples)
+    fig = plt.figure(1, (20, 20))
+    grid = ImageGrid(fig, 111, nrows_ncols=(4, 5), axes_pad=0.1)
+    for idx, img_pth in enumerate(test_samples):
+        image = Image.open(img_pth.as_posix())
+        image = image.resize((image_height, image_width), resample=Image.BICUBIC)
+        image_tensor = transforms.ToTensor()(image)
+        logging.info(
+            f"Start compute saliency map with FMGradCam for sample {idx+1}/{len(test_samples)}..."
+        )
+        fm_g_cam = FMGradCAM(
+            trainer.model, image_tensor, target_layer, class_count, activation_fn
+        )
+        fm_g_cam._get_saliency_maps()
+        orig_cam_imgs = visualize_saliency_maps(
+            fm_g_cam.saliency_maps, image, class_count
+        )
+        grid[idx].imshow(orig_cam_imgs, cmap="gray", interpolation="none")
+        logging.info("Finished.")
+
+    fig.savefig(
+        "/home/mmhamdi/workspace/classification/XAI-with-fused-multi-class-Grad-CAM/outputs/grid_grad_cam.jpg"
     )
-    image = image.resize((image_height, image_width), resample=Image.BICUBIC)
-    image_tensor = transforms.ToTensor()(image)
-    logging.info("Start compute saliency map with FMGradCam...")
-    fm_g_cam = FMGradCAM(
-        trainer.model, image_tensor, target_layer, class_count, activation_fn
-    )
-    fm_g_cam._get_saliency_maps()
-    visualize_saliency_maps(fm_g_cam.saliency_maps, image, class_count)
-    logging.info("Finished.")

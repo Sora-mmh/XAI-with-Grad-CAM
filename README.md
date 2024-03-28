@@ -65,7 +65,11 @@ The architecture of this work is as follows:
 <!-- <p align="right">(<a href="#top">back to top</a>)</p> -->
 
 <!-- GradCam -->
-## Multi-class Grad-CAM
+## Grad-CAM
+
+With a lightweight training of 5 epochs, the goal is to highlight the main pixels responsable for the final prediction for the following test images :
+
+<img src="outputs/grid_grad_cam.jpg" alt="drawing" width="800"/>
 
 
 

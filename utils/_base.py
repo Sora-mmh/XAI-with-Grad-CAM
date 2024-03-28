@@ -42,6 +42,7 @@ def visualize_saliency_maps(
     )
     stacked_images.paste(original_image, (0, 0))
     stacked_images.paste(new_image, (original_image.width, 0))
-    stacked_images.save(
-        "/home/mmhamdi/workspace/classification/XAI-with-fused-multi-class-Grad-CAM/outputs/fmgradcam.jpg"
-    )
+    return stacked_images
+    # stacked_images.save(
+    #    "/home/mmhamdi/workspace/classification/XAI-with-fused-multi-class-Grad-CAM/outputs/fmgradcam.jpg"
+    # )
