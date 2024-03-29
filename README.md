@@ -1,4 +1,4 @@
-# XAI-with-fused-multi-class-Grad-CAM
+# XAI-with-Grad-CAM
 
 
 <!-- TABLE OF CONTENTS -->
